@@ -2,7 +2,7 @@ pragma solidity ^0.6.7;
 
 import "@chainlink/contracts/src/v0.6/interfaces/AggregatorV3Interface.sol";
 
-contract PriceConsumerV3 {
+contract HistoricalPriceConsumerV3 {
 
     AggregatorV3Interface internal priceFeed;
 
@@ -18,8 +18,10 @@ contract PriceConsumerV3 {
     /**
      * Returns the latest price
      */
-    function getLatestPrice() public view returns (int256) {
-        (,int256 answer,,,) = priceFeed.latestRoundData();
+    function getHistoricalPrice(uint80 roundsBack) public view returns (int256) {
+        (uint80 roundId,,,,) = priceFeed.latestRoundData();
+        uint80 historicalRoundId = roundId - roundsBack;
+        (,int256 answer,,,) = priceFeed.getRoundData(historicalRoundId);
         return answer;
     }
 }
